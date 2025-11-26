@@ -1,234 +1,245 @@
-# AI CODEFIX 2025 🚀
-
-**Competitive Coding Event**
-Organized by Dept. of AI&ML & AI&DS
-In collaboration with AI Planet, Agrowvitz, Tensor AI Club
+# AI CODEFIX 2025 - Easy Challenge
+## Navigate Namma Bengaluru (Bangalore Wumpus World)
 
 ---
 
-## 📅 Event Overview
+## Problem Statement
 
-**Duration**: 3 hours
-**Format**: Individual/Team coding challenges
-**Difficulty Levels**: Easy → Medium → Hard
+You are required to implement an **A\* pathfinding algorithm** for a Bangalore-themed variant of the classic Wumpus World. The agent must navigate a 5×10 grid filled with real-world Bangalore obstacles to reach the goal safely. The agent must take all the environmental elements into account(this includes the cell costs) to find the optimal path to the goal cell.
 
 ---
 
-## 🎯 Challenges
+## World Description
 
-### 🟢 Easy Challenge: Navigate Namma Bengaluru
-**Topic**: Pathfinding Algorithm (A* Search)
-**Task**: Implement A* pathfinding to navigate a 5×10 grid with Bangalore-themed obstacles (traffic lights, cows, pits)
-**Folder**: `./` (root directory)
+### Grid Layout
+- **Size:** 5 rows × 10 columns
+- **Agent Start:** Bottom-left diagonal cell (0, 4)
+- **Goal:** Randomly placed (varies per team based on seed)
 
----
+### Environmental Elements
 
-### 🟡 Medium Challenge: Traffic Router Debugger
-**Topic**: Graph Algorithms & Debugging
-**Task**: Debug a broken Dijkstra's variant with 15 bugs across traffic routing implementation
-**Folder**: `hard/`
-
----
-
-### 🔴 Hard Challenge: KV-Attention Debugger
-**Topic**: Deep Learning & Transformers
-**Task**: Debug a broken KV-Cached Multi-Head Attention mechanism used in LLMs
-**Folder**: `hard_2/`
+| Element | Percept | Effect |cost|
+|---------|---------|--------|------------|
+| **Traffic Light** | Adjacent cells detect "light" indicator | Wait cost → passable but slower   |5|
+| **Cow** | Adjacent cells detect "moo" sound | Adjacent cell has cow →If  mark as forbidden → return to start → re-compute A* |10|
+| **Pit** | Adjacent cells detect "breeze" | **Game Over** if entered, Adjacent cells are risky → high cost, avoid unless necessary|infinite|
+| **Goal** | No percept | **Win** if reached |-|
 
 ---
 
-## 🚀 Getting Started
+## What's Already Implemented ✅
 
-### Prerequisites
-```bash
-Python 3.8+
-pip install -r requirements.txt
+The starter code (`wumpus_world.py`) provides:
+
+- ✅ Pygame visualization of 5×10 grid
+- ✅ Randomized weights of each grid (0-100)
+- ✅ Random world generation (using your team's unique seed)
+- ✅ Percept detection system (breeze, moo, light)
+- ✅ Traffic light delay mechanism (nested loop)
+- ✅ Cow collision → reset to start
+- ✅ Pit detection → Game Over
+- ✅ Game state management
+
+---
+
+## What You Must Implement 🔨
+
+### Task: Complete the `find_path_astar()` function
+
+**Location:** `wumpus_world.py`, line ~170
+
+**Requirements:**
+
+1. **Implement A\* pathfinding** from agent's current position to goal
+2. **Movement rules:**
+   - Only **orthogonal movement** (up, down, left, right)
+   - **NO diagonal movement allowed**
+3. **Handle obstacles:**
+   - **Pits:** Must avoid completely (entering = Game Over)
+   - **Traffic Lights:** Can pass through but cost more (suggest cost = 5)
+   - **Cows:** Strategy choice:
+     - Option: Handle collision and replan from start and mark path as unusable. Use a different path.
+4. **Return value:**
+   - List of (x, y) tuples representing path
+   - Example: `[(0, 4), (1, 4), (2, 4), ...]`
+   - Return `None` if no path exists
+
+---
+
+## Algorithm Hints
+
+### A\* Formula
+```
+f(n) = g(n) + h(n)
+```
+- **g(n)** = actual cost from start to node n(Assume the randomized weights to be the actual costs)
+- **h(n)** = heuristic estimate from n to goal (use Manhattan distance)
+- **f(n)** = total estimated cost
+
+### Cost Function
+```python
+ import random
+
+def get_cell_cost(x, y):
+    cell_type = self.grid[y][x]['type']
+
+    if cell_type == 'pit':
+        return float('inf')        # avoid pits completely
+    elif cell_type == 'traffic_light':
+        return 5                   # fixed cost
+    elif cell_type == 'cow':
+        return 10                  # fixed cost
+    else:
+        return self.grid[y][x]['weight']  # random cost ONLY for normal cells
+
 ```
 
-### Choose Your Challenge
+### Manhattan Distance Heuristic
+```python
+def heuristic(pos, goal):
+    return abs(pos[0] - goal[0]) + abs(pos[1] - goal[1])
+```
 
-**Easy Challenge:**
+### Key Considerations
+
+⚠️ **No Diagonal Movement**
+- When generating neighbors, only use: `[(0,-1), (0,1), (-1,0), (1,0)]`
+- Do NOT use diagonal directions like `(1,1)` or `(-1,-1)`
+
+⚠️ **Cow Collision Handling**
+- If your path crosses a cow, the agent resets to start
+- You need to either:
+  - Detect collision and replan from start position
+
+⚠️ **Path Not Found**
+- If no valid path exists, set `self.message = "Path Not Found"`
+- Return `None`
+
+---
+
+## How to Run
+
+### Setup
 ```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the game
 python wumpus_world.py
 ```
 
-**Medium Challenge:**
-```bash
-cd hard
-python validator.py --file traffic_router.py
+### Controls
+- **Arrow Keys:** Manual movement (you are allowed to use manual movements for testing,however the final solution must be automated)
+- **SPACE:** Execute A\* pathfinding (once implemented)
+- **R:** Reset world with same seed
+- **ESC:** Quit
+
+---
+
+## Testing Your Solution
+
+### Test Cases
+1. **Basic Path:** Can agent reach goal on empty grid?
+2. **Avoid Pits:** Does A\* route around pits correctly?
+3. **Traffic Lights:** Does path account for traffic light costs?
+4. **No Path:** Does it return "Path Not Found" when goal is unreachable?
+5. **Cow Handling:** What happens if only path includes a cow?
+
+### Expected Output
+When you press **SPACE**, you should see:
+```
+=== Executing A* Pathfinding ===
+Path found: [(0, 4), (1, 4), (2, 4), (2, 3), (3, 3), ...]
+(0,4): f(n)= g(n) +h(n)= 10+300=310
+....
+```
+Agent should then automatically navigate to the goal.
+
+
+---
+
+## Submission Checklist
+
+- [ ] `find_path_astar()` function fully implemented
+- [ ] A\* algorithm correctly uses Manhattan distance heuristic
+- [ ] No diagonal movement in path
+- [ ] Pits are avoided (never entered)
+- [ ] Traffic lights handled (higher cost or proper logic)
+- [ ] Cow collision strategy decided and implemented
+- [ ] "Path Not Found" message displayed when no path exists
+- [ ] Agent successfully reaches goal when path exists
+- [ ] Code is clean and well-commented
+
+---
+
+## Debugging Tips
+
+### Print Debugging
+Add these to understand your A\* logic:
+```python
+print(f"Current node: {current}")
+print(f"Goal: {goal}")
+print(f"f_score[current]: {f_score[current]}")
+print(f"Neighbors: {neighbors}")
 ```
 
-**Hard Challenge:**
-```bash
-cd hard_2
-python validator.py --file kv_attention.py
+### Visualize Open Set
+```python
+print(f"Open set size: {len(open_set)}")
+print(f"Visited nodes: {len(visited)}")
 ```
 
----
-
-## 📊 Scoring
-
-- **Easy**: 30 points
-- **Medium**: 35 points
-- **Hard**: 35 points
-- **Total**: 100 points
-
-Partial credit available for incomplete solutions.
-
----
-
-## 🏆 Winning Strategy
-
-1. **Start with Easy** - Build confidence
-2. **Time management** - Don't spend too long on any one challenge
-3. **Test frequently** - Validate your fixes incrementally
-4. **Read instructions** - Each challenge has detailed README
-5. **Stay calm** - Debugging requires patience
-
----
-
-## 💡 Tips & Guidelines
-
-### Do's ✅
-- Read the entire README for each challenge
-- Test your code frequently
-- Use debugging prints to trace issues
-- Ask for clarification if instructions are unclear
-- Manage your time across all three challenges
-
-### Don'ts ❌
-- Don't refactor working code unnecessarily
-- Don't skip testing
-- Don't make random changes hoping they work
-- Don't spend all time on one challenge
-
----
-
-## ⚠️ Important Notes
-
-1. **Internet Access**: You may use internet resources, documentation, and AI tools
-2. **Original Work**: Your implementations must be your own
-3. **Testing**: Use provided validators to check your solutions
-4. **Submission**: Ensure all code runs without errors
-5. **Code Quality**: Clean, readable code earns bonus points
-
----
-
-## 🎯 Challenge Difficulty Guide
-
-**Easy**: If you know basic pathfinding algorithms
-**Medium**: If you can debug complex algorithmic code
-**Hard**: If you understand deep learning and transformers
-
-Pick challenges that match your skill level, but don't be afraid to try harder ones!
-
----
-
-## ❓ FAQs
-
-**Q: Can I use external libraries?**
-A: Yes, for Easy challenge. Medium and Hard challenges should use only the specified dependencies.
-
-**Q: How much time should I spend on each?**
-A: Easy (45 min), Medium (60 min), Hard (75 min) - but adjust based on your progress.
-
-**Q: Can I skip a challenge?**
-A: Yes! Focus on challenges where you can score maximum points.
-
-**Q: Are AI tools like ChatGPT allowed?**
-A: Yes, but note that harder challenges are designed to resist AI assistance. Understanding is key.
-
-**Q: What if I get stuck?**
-A: Move to another challenge and come back if time permits. Partial credit is available.
-
-**Q: Can I work in a team?**
-A: Check with organizers for team rules.
-
----
-
-## 🆘 Need Help?
-
-- Check the README in each challenge folder
-- Review the Resources section in challenge READMEs
-- Ask organizers for clarification (not solutions!)
-- Use provided test cases to debug
-
----
-
-## 📁 Repository Structure
-
-```
-AI-CODEFIX-2025/
-├── README.md                    # This file
-├── wumpus_world.py             # Easy challenge
-├── requirements.txt
-├── team_config.json            # Your team configuration
-├── hard/                       # Medium challenge
-│   ├── README.md
-│   ├── traffic_router.py
-│   ├── validator.py
-│   └── test_cases.json
-└── hard_2/                     # Hard challenge
-    ├── README.md
-    ├── kv_attention.py
-    ├── validator.py
-    └── test_cases.json
+### Check Path Validity
+```python
+for step in path:
+    cell_type = self.grid[step[1]][step[0]]['type']
+    print(f"{step} -> {cell_type}")
 ```
 
 ---
 
-## 🎓 What You'll Learn
+## Scoring Criteria
 
-- **Algorithms**: A*, Dijkstra's, pathfinding
-- **Debugging**: Systematic bug hunting in complex code
-- **Deep Learning**: Transformer attention mechanisms
-- **Problem Solving**: Breaking down complex problems
-- **Time Management**: Prioritizing under pressure
-
----
-
-## 🌟 Motivation
-
-> "Debugging is like being a detective in a crime movie where you are also the murderer." - Filipe Fortes
-
-This event tests not just your coding ability, but your:
-- Problem-solving skills
-- Debugging intuition
-- Time management
-- Ability to work under pressure
-- Understanding of algorithms and ML
-
-Remember: **The goal is to learn and have fun!** Even if you don't solve everything, you'll gain valuable debugging experience.
+| Criteria | Points |
+|----------|--------|
+| A\* correctly implemented | 40% |
+| Reaches goal successfully | 30% |
+| Handles all obstacles correctly | 20% |
+| Code quality & comments | 10% |
 
 ---
 
-## 🏁 Final Checklist
+## FAQs
 
-Before submitting:
-- [ ] Code runs without errors
-- [ ] Validators pass (or show maximum progress)
-- [ ] Code is readable and commented
-- [ ] Tested edge cases
-- [ ] All required functions implemented
-- [ ] Followed challenge-specific requirements
+**Q: Can I use libraries like `heapq` for priority queue?**
+A: Yes! Python's `heapq` is perfect for A\*.
 
----
+**Q: What if multiple paths have same cost?**
+A: Any valid optimal path is acceptable.
 
-## 🎉 Good Luck!
+**Q: Should I avoid cows or handle reset?**
+A: Your choice! Both strategies are valid if implemented correctly.
 
-**Remember:**
-- Stay calm and systematic
-- Test frequently
-- Read instructions carefully
-- Manage your time wisely
-- Don't give up - partial credit counts!
+**Q: Can I modify other functions besides `find_path_astar()`?**
+A: Yes, but document your changes clearly.
 
-**May the best debuggers win!** 🚀
+**Q: How do I know my team's unique configuration?**
+A: Check `team_config.json` - each team has a different seed.
 
 ---
 
-**Event**: AI CODEFIX 2025
-**Contact**: [Event Organizers]
-**Date**: [Event Date]
+## Resources
 
-*Happy Coding!* 💻✨
+- [A\* Pathfinding Tutorial](https://www.redblobgames.com/pathfinding/a-star/introduction.html)
+- [Python heapq Documentation](https://docs.python.org/3/library/heapq.html)
+- [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
+
+---
+
+**Good luck, and may your paths be optimal!** 🚀
+
+---
+
+**Event:** AI CODEFIX 2025
+**Organized by:** Dept. of AI&ML & AI&DS
+**In collaboration with:** AI Planet, Agrowvitz, Tensor AI Club
