@@ -17,7 +17,6 @@ In collaboration with AI Planet, Agrowvitz, Tensor AI Club
 ## 🎯 Challenges
 
 ### 🟢 Easy Challenge: Navigate Namma Bengaluru
-**Time**: ~45 minutes
 **Topic**: Pathfinding Algorithm (A* Search)
 **Task**: Implement A* pathfinding to navigate a 5×10 grid with Bangalore-themed obstacles (traffic lights, cows, pits)
 **Folder**: `./` (root directory)
@@ -25,7 +24,6 @@ In collaboration with AI Planet, Agrowvitz, Tensor AI Club
 ---
 
 ### 🟡 Medium Challenge: Traffic Router Debugger
-**Time**: ~60 minutes
 **Topic**: Graph Algorithms & Debugging
 **Task**: Debug a broken Dijkstra's variant with 15 bugs across traffic routing implementation
 **Folder**: `hard/`
@@ -33,7 +31,6 @@ In collaboration with AI Planet, Agrowvitz, Tensor AI Club
 ---
 
 ### 🔴 Hard Challenge: KV-Attention Debugger
-**Time**: ~75 minutes
 **Topic**: Deep Learning & Transformers
 **Task**: Debug a broken KV-Cached Multi-Head Attention mechanism used in LLMs
 **Folder**: `hard_2/`
