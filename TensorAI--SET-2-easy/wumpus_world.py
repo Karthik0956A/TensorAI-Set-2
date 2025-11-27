@@ -4,6 +4,7 @@ import random
 import sys
 from collections import deque
 
+
 # Initialize Pygame
 pygame.init()
 
@@ -44,7 +45,9 @@ class BangaloreWumpusWorld:
         random.seed(self.seed)
 
         # Initialize grid
-        self.grid = [[{'type': 'empty', 'percepts': []} for _ in range(GRID_COLS)] for _ in range(GRID_ROWS)]
+        self.grid = [[{'type': 'empty', 'percepts': [], 'weight': random.randint(1,15)}
+              for _ in range(GRID_COLS)] for _ in range(GRID_ROWS)]
+
 
         # Agent starts at bottom-left diagonal
         self.agent_start = (0, GRID_ROWS - 1)
@@ -383,15 +386,7 @@ def main():
                     else:
                         print("Path not found or A* not implemented yet")
 
-                # Manual movement controls
-                elif event.key == pygame.K_UP:
-                    world.move_agent(world.agent_pos[0], world.agent_pos[1] - 1)
-                elif event.key == pygame.K_DOWN:
-                    world.move_agent(world.agent_pos[0], world.agent_pos[1] + 1)
-                elif event.key == pygame.K_LEFT:
-                    world.move_agent(world.agent_pos[0] - 1, world.agent_pos[1])
-                elif event.key == pygame.K_RIGHT:
-                    world.move_agent(world.agent_pos[0] + 1, world.agent_pos[1])
+                
 
         renderer.render()
 
