@@ -1,0 +1,7 @@
+Adversarial Attack Success!
+Attack Method: Basic FGSM (ε=0.05)
+Original Class: T-shirt/top
+Adversarial Class: Shirt
+
+Extracted Flag:
+FLAG{FGSM_ATTACK_T-SHIRT_TOP_TO_SHIRT}

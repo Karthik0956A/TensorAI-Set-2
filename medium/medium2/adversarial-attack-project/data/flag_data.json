@@ -1,0 +1,8 @@
+{
+    "description": "This JSON file contains metadata related to the adversarial attack challenge.",
+    "model": "fashion_classifier",
+    "attack_method": "FGSM",
+    "secret_image": "Flag_image.png",
+    "status": "pending",
+    "notes": "Ensure to run the attack script to reveal the hidden information."
+}
